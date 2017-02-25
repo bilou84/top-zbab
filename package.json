@@ -1,0 +1,25 @@
+{
+  "name": "top-zbab",
+  "description": "Top Zbab, an application to plan recipes over a week",
+  "version": "1.0.0",
+  "license": "ISC",
+  "scripts": {
+    "start": "electron app",
+    "build": "yarn && gulp"
+  },
+  "devDependencies": {
+    "@types/electron": "1.4.29",
+    "@types/node": "6.0.52",
+    "browserify": "13.0.0",
+    "gulp": "3.9.1",
+    "gulp-jade": "1.1.0",
+    "gulp-stylus": "2.2.0",
+    "gulp-tslint": "4.3.1",
+    "gulp-typescript": "3.1.2",
+    "tslint": "3.12.1",
+    "typescript": "2.0.6",
+    "vinyl-source-stream": "1.1.0"
+  },
+  "main": "app/main.js",
+  "author": "bilou84 <nicolas.gauthier84@gmail.com>"
+}

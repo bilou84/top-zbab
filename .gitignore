@@ -1,0 +1,6 @@
+**/node_modules
+app/**/*.css
+app/**/*.html
+app/**/*.js
+src/**/*.js
+Top Zbab.bat
