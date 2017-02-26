@@ -23,6 +23,7 @@ function onAppReady() {
 
 function OnWindowFinishedLoading() {
   const recipesByCategory: { [category: string]: { [recipe: string]: IRecipe } } = {};
+  let menusByDay: { [day: string]: { Lunch: IMeal; Dinner: IMeal; } };
 
   const recipesPath = path.join(__dirname, "data", "recipes");
   for (const category of fs.readdirSync(recipesPath)) {
@@ -44,9 +45,26 @@ function OnWindowFinishedLoading() {
     }
   }
 
-  mainWindow.webContents.send("data", recipesByCategory);
+  try {
+    const menuFile = fs.readFileSync(path.join(__dirname, "data", "menu.json"), { encoding: "utf8" });
+    menusByDay = JSON.parse(menuFile);
+  }
+  catch (e) {
+    if (e.code !== "ENOENT") {
+      console.log(`Failed to parse saved menu`);
+      console.log(e.message);
+    }
+
+    menusByDay = null;
+  }
+
+  mainWindow.webContents.send("data", recipesByCategory, menusByDay);
 }
 
 function OnWindowClosed() {
   mainWindow = null;
 }
+
+electron.ipcMain.on("saveMenu", (sender, menu) => {
+  fs.writeFileSync(path.join(__dirname, "data", "menu.json"), JSON.stringify(menu, null, 2), { encoding: "utf8" });
+});

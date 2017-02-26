@@ -10,37 +10,39 @@ html
     .buttons
       button.new-menu(disabled) Nouveau menu
 
+    - var days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+
     mixin meal(meal)
       tr(data-meal=meal).category-time
         th(rowspan=5)=meal
-        each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+        each day in days
           td(data-day=day)
             div
               p.category
               p.time
 
       tr(data-meal=meal).title
-        each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+        each day in days
           td(data-day=day)
 
       tr(data-meal=meal).sidedish
-        each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+        each day in days
           td(data-day=day)
 
       tr(data-meal=meal).notes
-        each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+        each day in days
           td(data-day=day)
             textarea
 
       tr(data-meal=meal).source
-        each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+        each day in days
           td(data-day=day)
 
     .calendar
       table
         tr.header
           th Jour
-          each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+          each day in days
             th= day
 
         +meal("Midi")

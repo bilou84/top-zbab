@@ -4,3 +4,4 @@ app/**/*.html
 app/**/*.js
 src/**/*.js
 Top Zbab.bat
+app/data/menu.json

@@ -2,13 +2,21 @@ import * as electron from "electron";
 
 const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 let recipesByCategory: { [category: string]: { [recipe: string]: IRecipe } };
+let menusByDay: { [day: string]: { Lunch: IMeal; Dinner: IMeal; } };
 
-electron.ipcRenderer.on("data", (event, recipes) => {
-  recipesByCategory = recipes;
+electron.ipcRenderer.on("data", (event, theRecipesByCategory, theMenusByDay) => {
+  recipesByCategory = theRecipesByCategory;
+  menusByDay = theMenusByDay;
 
-  const savedMenu = localStorage.getItem("menu");
-  if (savedMenu != null) setupMenu(JSON.parse(savedMenu));
-  else createNewMenu();
+  if (menusByDay != null) {
+    for (let day in menusByDay) {
+      const lunch = menusByDay[day].Lunch;
+      setupMeal(lunch.category, lunch.recipe, day, "Midi");
+
+      const dinner = menusByDay[day].Dinner;
+      setupMeal(dinner.category, dinner.recipe, day, "Soir");
+    }
+  }
 
   const newMenuButton = document.querySelector("button.new-menu") as HTMLButtonElement;
   newMenuButton.addEventListener("click", createNewMenu);
@@ -20,6 +28,7 @@ function createNewMenu() {
   for (const category of Object.keys(recipesByCategory))
     recipeQuantityByCategory[category] = category === "poisson" || category === "végétariens" ? 3 : 2;
 
+  menusByDay = {};
   const pickedCategories: string[] = [];
   const newMenu: string[] = [];
 
@@ -27,45 +36,51 @@ function createNewMenu() {
     // Lunch
     const categoryLunch = getCategory(recipeQuantityByCategory, pickedCategories);
     const recipeLunch = getRecipe(categoryLunch, newMenu);
+    setupMeal(categoryLunch, recipeLunch, days[i], "Midi");
     newMenu.push(`${categoryLunch}_${recipeLunch}`);
 
     // Dinner
     const categoryDinner = getCategory(recipeQuantityByCategory, pickedCategories);
     const recipeDinner = getRecipe(categoryDinner, newMenu);
+    setupMeal(categoryDinner, recipeDinner, days[i], "Soir");
     newMenu.push(`${categoryDinner}_${recipeDinner}`);
+
+    menusByDay[days[i]] = {
+      Lunch: {
+        category: categoryLunch,
+        recipe: recipeLunch,
+        notes: ""
+      },
+      Dinner: {
+        category: categoryDinner,
+        recipe: recipeDinner,
+        notes: ""
+      }
+    };
   }
 
-  setupMenu(newMenu);
-  localStorage.setItem("menu", JSON.stringify(newMenu));
+  electron.ipcRenderer.send("saveMenu", menusByDay);
 }
 
-function setupMenu(menu: string[]) {
-  let index = 0;
-  for (const day of days) {
-    for (const meal of ["Midi", "Soir"]) {
-      const categoryElt = document.querySelector(`tr[data-meal=${meal}].category-time td[data-day=${day}] .category`) as HTMLParagraphElement;
-      const timeElt = document.querySelector(`tr[data-meal=${meal}].category-time td[data-day=${day}] .time`) as HTMLParagraphElement;
-      const titleElt = document.querySelector(`tr[data-meal=${meal}].title td[data-day=${day}]`) as HTMLTableDataCellElement;
-      const sidedishElt = document.querySelector(`tr[data-meal=${meal}].sidedish td[data-day=${day}]`) as HTMLTableDataCellElement;
-      const sourceElt = document.querySelector(`tr[data-meal=${meal}].source td[data-day=${day}]`) as HTMLTableDataCellElement;
+function setupMeal(category: string, recipeName: string, day: string, mealType: MealType) {
+  const categoryElt = document.querySelector(`tr[data-meal=${mealType}].category-time td[data-day=${day}] .category`) as HTMLParagraphElement;
+  const timeElt = document.querySelector(`tr[data-meal=${mealType}].category-time td[data-day=${day}] .time`) as HTMLParagraphElement;
+  const titleElt = document.querySelector(`tr[data-meal=${mealType}].title td[data-day=${day}]`) as HTMLTableDataCellElement;
+  const sidedishElt = document.querySelector(`tr[data-meal=${mealType}].sidedish td[data-day=${day}]`) as HTMLTableDataCellElement;
+  const sourceElt = document.querySelector(`tr[data-meal=${mealType}].source td[data-day=${day}]`) as HTMLTableDataCellElement;
 
-      const [category, recipeName] = menu[index].split("_");
-      if (recipesByCategory[category] == null || recipesByCategory[category][recipeName] == null) {
-        titleElt.textContent = `Unknown recipe. Category: ${category}. Name: ${recipeName}`;
-        categoryElt.textContent = timeElt.textContent = sidedishElt.textContent = sourceElt.textContent = "";
+  if (recipesByCategory[category] == null || recipesByCategory[category][recipeName] == null) {
+    titleElt.textContent = `Unknown recipe. Category: ${category}. Name: ${recipeName}`;
+    categoryElt.textContent = timeElt.textContent = sidedishElt.textContent = sourceElt.textContent = "";
 
-      } else {
-        const recipe = recipesByCategory[category][recipeName];
+  } else {
+    const recipe = recipesByCategory[category][recipeName];
 
-        categoryElt.textContent = category;
-        timeElt.textContent = `${recipe.time}m`;
-        titleElt.textContent = recipeName;
-        sidedishElt.textContent = recipe.sidedishes != null ? random(recipe.sidedishes) : "";
-        sourceElt.textContent = recipe.source;
-      }
-
-      index++;
-    }
+    categoryElt.textContent = category;
+    timeElt.textContent = `${recipe.time}m`;
+    titleElt.textContent = recipeName;
+    sidedishElt.textContent = recipe.sidedishes != null ? random(recipe.sidedishes) : "";
+    sourceElt.textContent = recipe.source;
   }
 }
 

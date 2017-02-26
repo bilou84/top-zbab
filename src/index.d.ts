@@ -5,3 +5,11 @@ interface IRecipe {
   flags?: string[];
   sidedishes?: string[];
 }
+
+type MealType = "Midi"|"Soir";
+
+interface IMeal {
+  category: string;
+  recipe: string;
+  notes: string;
+}
