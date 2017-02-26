@@ -2,32 +2,31 @@ import * as electron from "electron";
 
 const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 let recipesByCategory: { [category: string]: { [recipe: string]: IRecipe } };
-let menusByDay: { [day: string]: { Lunch: IMeal; Dinner: IMeal; } };
+let menusByDay: Menu;
 
 electron.ipcRenderer.on("data", (event, theRecipesByCategory, theMenusByDay) => {
   recipesByCategory = theRecipesByCategory;
   menusByDay = theMenusByDay;
 
   for (const day of days) {
-    if (menusByDay != null) {
-      const lunch = menusByDay[day].Lunch;
-      setupMeal(day, "Midi", lunch.category, lunch.recipe, lunch.notes);
+    for (const mealType of ["Midi", "Soir"]) {
+      if (menusByDay != null) {
+        const meal = menusByDay[day][mealType];
+        setupMeal(day, mealType, meal.category, meal.recipe, meal.sidedish, meal.notes);
+      }
 
-      const dinner = menusByDay[day].Dinner;
-      setupMeal(day, "Soir", dinner.category, dinner.recipe, dinner.notes);
+      const sidedishElt = document.querySelector(`tr[data-meal=${mealType}].sidedish td[data-day=${day}] select`) as HTMLSelectElement;
+      sidedishElt.addEventListener("change", () => {
+        menusByDay[day][mealType].sidedish = sidedishElt.value;
+        electron.ipcRenderer.send("saveMenu", menusByDay);
+      });
+
+      const notesElt = document.querySelector(`tr[data-meal=${mealType}].notes td[data-day=${day}] textarea`) as HTMLTextAreaElement;
+      notesElt.addEventListener("input", () => {
+        menusByDay[day][mealType].notes = notesElt.value;
+        electron.ipcRenderer.send("saveMenu", menusByDay);
+      });
     }
-
-    const lunchNotesElt = document.querySelector(`tr[data-meal='Midi'].notes td[data-day=${day}] textarea`) as HTMLTextAreaElement;
-    lunchNotesElt.addEventListener("input", () => {
-      menusByDay[day].Lunch.notes = lunchNotesElt.value;
-      electron.ipcRenderer.send("saveMenu", menusByDay);
-    });
-
-    const dinnerNotesElt = document.querySelector(`tr[data-meal="Soir"].notes td[data-day=${day}] textarea`) as HTMLTextAreaElement;
-    dinnerNotesElt.addEventListener("input", () => {
-      menusByDay[day].Dinner.notes = dinnerNotesElt.value;
-      electron.ipcRenderer.send("saveMenu", menusByDay);
-    });
   }
 
   const newMenuButton = document.querySelector("button.new-menu") as HTMLButtonElement;
@@ -45,47 +44,34 @@ function createNewMenu() {
   const pickedRecipes: string[] = [];
 
   for (let i = 0; i < days.length; i++) {
-    // Lunch
-    const categoryLunch = getCategory(recipeQuantityByCategory, pickedCategories);
-    const recipeLunch = getRecipe(categoryLunch, pickedRecipes);
-    setupMeal(days[i], "Midi", categoryLunch, recipeLunch, "");
-    pickedRecipes.push(`${categoryLunch}_${recipeLunch}`);
+    menusByDay[days[i]] = {};
 
-    // Dinner
-    const categoryDinner = getCategory(recipeQuantityByCategory, pickedCategories);
-    const recipeDinner = getRecipe(categoryDinner, pickedRecipes);
-    setupMeal(days[i], "Soir", categoryDinner, recipeDinner, "");
-    pickedRecipes.push(`${categoryDinner}_${recipeDinner}`);
-
-    menusByDay[days[i]] = {
-      Lunch: {
-        category: categoryLunch,
-        recipe: recipeLunch,
-        notes: ""
-      },
-      Dinner: {
-        category: categoryDinner,
-        recipe: recipeDinner,
-        notes: ""
-      }
-    };
+    for (const mealType of ["Midi", "Soir"]) {
+      const category = getCategory(recipeQuantityByCategory, pickedCategories);
+      const recipeName = getRecipe(category, pickedRecipes);
+      const sidedish = random(recipesByCategory[category][recipeName].sidedishes);
+      setupMeal(days[i], mealType, category, recipeName, sidedish, "");
+    }
   }
 
   electron.ipcRenderer.send("saveMenu", menusByDay);
 }
 
-function setupMeal(day: string, mealType: MealType, category: string, recipeName: string, notes: string) {
+function setupMeal(day: string, mealType: string, category: string, recipeName: string, sidedish: string, notes: string) {
   const categoryElt = document.querySelector(`tr[data-meal=${mealType}].category-time td[data-day=${day}] .category`) as HTMLParagraphElement;
   const timeElt = document.querySelector(`tr[data-meal=${mealType}].category-time td[data-day=${day}] .time`) as HTMLParagraphElement;
   const titleElt = document.querySelector(`tr[data-meal=${mealType}].title td[data-day=${day}]`) as HTMLTableDataCellElement;
-  const sidedishElt = document.querySelector(`tr[data-meal=${mealType}].sidedish td[data-day=${day}]`) as HTMLTableDataCellElement;
+  const sidedishElt = document.querySelector(`tr[data-meal=${mealType}].sidedish td[data-day=${day}] select`) as HTMLSelectElement;
   const notesElt = document.querySelector(`tr[data-meal=${mealType}].notes td[data-day=${day}] textarea`) as HTMLTextAreaElement;
   const sourceElt = document.querySelector(`tr[data-meal=${mealType}].source td[data-day=${day}]`) as HTMLTableDataCellElement;
 
+  for (let i = 0; i < sidedishElt.children.length; i++) sidedishElt.removeChild(sidedishElt.children.item(i));
+  categoryElt.textContent = timeElt.textContent = sidedishElt.value = notesElt.value = sourceElt.textContent = "";
+  sidedishElt.disabled = true;
+  notesElt.disabled = true;
+
   if (recipesByCategory[category] == null || recipesByCategory[category][recipeName] == null) {
     titleElt.textContent = `Unknown recipe. Category: ${category}. Name: ${recipeName}`;
-    categoryElt.textContent = timeElt.textContent = sidedishElt.textContent = notesElt.value = sourceElt.textContent = "";
-    notesElt.disabled = true;
 
   } else {
     const recipe = recipesByCategory[category][recipeName];
@@ -93,10 +79,30 @@ function setupMeal(day: string, mealType: MealType, category: string, recipeName
     categoryElt.textContent = category;
     timeElt.textContent = `${recipe.time}m`;
     titleElt.textContent = recipeName;
-    sidedishElt.textContent = recipe.sidedishes != null ? random(recipe.sidedishes) : "";
-    notesElt.value = notes;
+
+    if (recipe.sidedishes != null) {
+      sidedishElt.disabled = false;
+
+      for (let recipeSidedish of recipe.sidedishes) {
+        const sidedishOptionElt = document.createElement("option");
+        sidedishOptionElt.value = sidedishOptionElt.textContent = recipeSidedish;
+        sidedishElt.appendChild(sidedishOptionElt);
+      }
+
+      sidedishElt.value = sidedish;
+    }
+
     notesElt.disabled = false;
+    notesElt.value = notes;
+
     sourceElt.textContent = recipe.source;
+
+    menusByDay[day][mealType] = {
+      category: category,
+      recipe: recipeName,
+      sidedish: sidedish,
+      notes: notes
+    };
   }
 }
 
@@ -153,10 +159,13 @@ function getRecipe(category: string, pickedRecipes: string[]) {
     recipe = random(Object.keys(recipesByCategory[category]));
   }
 
+  pickedRecipes.push(`${category}_${recipe}`);
   return recipe;
 }
 
 function random(list: string[]) {
+  if (list == null) return null;
+
   const index = Math.min(list.length - 1, Math.floor(Math.random() * list.length));
   return list[index];
 }

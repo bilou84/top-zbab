@@ -23,7 +23,7 @@ function onAppReady() {
 
 function OnWindowFinishedLoading() {
   const recipesByCategory: { [category: string]: { [recipe: string]: IRecipe } } = {};
-  let menusByDay: { [day: string]: { Lunch: IMeal; Dinner: IMeal; } };
+  let menusByDay: Menu;
 
   const recipesPath = path.join(__dirname, "data", "recipes");
   for (const category of fs.readdirSync(recipesPath)) {
@@ -62,7 +62,7 @@ function OnWindowFinishedLoading() {
 }
 
 let scheduledMenuSave: NodeJS.Timer;
-let menuToSave: { [day: string]: { Lunch: IMeal; Dinner: IMeal; } };
+let menuToSave: Menu;
 
 function saveMenu() {
   fs.writeFileSync(path.join(__dirname, "data", "menu.json"), JSON.stringify(menuToSave, null, 2), { encoding: "utf8" });

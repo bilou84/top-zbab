@@ -6,10 +6,11 @@ interface IRecipe {
   sidedishes?: string[];
 }
 
-type MealType = "Midi"|"Soir";
+type Menu = { [day: string]: { [mealType: string]: IMeal } };
 
 interface IMeal {
   category: string;
   recipe: string;
   notes: string;
+  sidedish: string;
 }
