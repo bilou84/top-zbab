@@ -38,13 +38,20 @@ function setupMenu(menu: string[]) {
   let index = 0;
   for (const day of days) {
     for (const meal of ["lunch", "dinner"]) {
-      const [category, recipeName] = menu[index].split("_");
-      if (recipesByCategory[category] == null || recipesByCategory[category][recipeName] == null) continue;
+      const titleElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.title`) as HTMLParagraphElement;
+      const sourceElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.source`) as HTMLParagraphElement;
+      const timeElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.time`) as HTMLParagraphElement;
 
-      const recipe = recipesByCategory[category][recipeName];
-      (document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.title`) as HTMLParagraphElement).textContent = recipeName;
-      (document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.source`) as HTMLParagraphElement).textContent = recipe.source;
-      (document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.time`) as HTMLParagraphElement).textContent = `${recipe.time}m`;
+      const [category, recipeName] = menu[index].split("_");
+      if (recipesByCategory[category] == null || recipesByCategory[category][recipeName] == null) {
+        titleElt.textContent = `Unknown recipe. Category: ${category}. Name: ${recipeName}`;
+        sourceElt.textContent = timeElt.textContent = "";
+      } else {
+        const recipe = recipesByCategory[category][recipeName];
+        titleElt.textContent = recipeName;
+        sourceElt.textContent = recipe.source;
+        timeElt.textContent = `${recipe.time}m`;
+      }
 
       index++;
     }
