@@ -30,7 +30,17 @@ function OnWindowFinishedLoading() {
 
     for (const recipeFileName of fs.readdirSync(path.join(recipesPath, category))) {
       const recipeFile = fs.readFileSync(path.join(recipesPath, category, recipeFileName), { encoding: "utf8" });
-      recipesByCategory[category][recipeFileName.replace(".json", "")] = JSON.parse(recipeFile);
+      let recipe: IRecipe;
+      try {
+        recipe = JSON.parse(recipeFile);
+      }
+      catch (e) {
+        console.log(`Failed to parse recipe ${recipeFileName}`);
+        console.log(e.message);
+        continue;
+      }
+
+      recipesByCategory[category][recipeFileName.replace(".json", "")] = recipe;
     }
   }
 
