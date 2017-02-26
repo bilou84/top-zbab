@@ -16,20 +16,32 @@ electron.ipcRenderer.on("data", (event, recipes) => {
 });
 
 function createNewMenu() {
+  const recipeQuantityByCategory: { [category: string]: number } = {
+    "boeuf": 6,
+    "poisson": 5,
+    "vegetariens": 3
+  };
+
   const newMenu: string[] = [];
 
-  const categories = Object.keys(recipesByCategory);
   for (let i = 0; i < days.length; i++) {
     // Lunch
-    const categoryLunch = random(categories);
+    const categoryLunch = random(Object.keys(recipeQuantityByCategory));
+    recipeQuantityByCategory[categoryLunch]--;
+    if (recipeQuantityByCategory[categoryLunch] === 0) delete recipeQuantityByCategory[categoryLunch];
+
     const recipeNameLunch = random(Object.keys(recipesByCategory[categoryLunch]));
     newMenu.push(`${categoryLunch}_${recipeNameLunch}`);
 
     // Dinner
-    const categoryDinner = random(categories);
+    const categoryDinner = random(Object.keys(recipeQuantityByCategory));
+    recipeQuantityByCategory[categoryDinner]--;
+    if (recipeQuantityByCategory[categoryDinner] === 0) delete recipeQuantityByCategory[categoryDinner];
+
     const recipeNameDinner = random(Object.keys(recipesByCategory[categoryDinner]));
     newMenu.push(`${categoryDinner}_${recipeNameDinner}`);
   }
+
   setupMenu(newMenu);
   localStorage.setItem("menu", JSON.stringify(newMenu));
 }
@@ -39,18 +51,21 @@ function setupMenu(menu: string[]) {
   for (const day of days) {
     for (const meal of ["lunch", "dinner"]) {
       const titleElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.title`) as HTMLParagraphElement;
-      const sourceElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.source`) as HTMLParagraphElement;
       const timeElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.time`) as HTMLParagraphElement;
+      const sourceElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.source`) as HTMLParagraphElement;
+      const categoryElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.category`) as HTMLParagraphElement;
 
       const [category, recipeName] = menu[index].split("_");
       if (recipesByCategory[category] == null || recipesByCategory[category][recipeName] == null) {
         titleElt.textContent = `Unknown recipe. Category: ${category}. Name: ${recipeName}`;
-        sourceElt.textContent = timeElt.textContent = "";
+        timeElt.textContent = sourceElt.textContent = categoryElt.textContent = "";
+
       } else {
         const recipe = recipesByCategory[category][recipeName];
         titleElt.textContent = recipeName;
-        sourceElt.textContent = recipe.source;
         timeElt.textContent = `${recipe.time}m`;
+        sourceElt.textContent = recipe.source;
+        categoryElt.textContent = category;
       }
 
       index++;
