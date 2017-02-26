@@ -1,6 +1,14 @@
 import * as electron from "electron";
 
 const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+const colorsByCategory: { [category: string]: string } = {
+  "boeuf": "ff0000",
+  "oeufs": "ff00ff",
+  "poisson": "0000ff",
+  "porc": "00ffff",
+  "poulet": "daa520",
+  "végétariens": "00ff00"
+};
 let recipesByCategory: { [category: string]: { [recipe: string]: IRecipe } };
 let menusByDay: Menu;
 
@@ -67,6 +75,7 @@ function setupMeal(day: string, mealType: string, category: string, recipeName: 
 
   for (let i = 0; i < sidedishElt.children.length; i++) sidedishElt.removeChild(sidedishElt.children.item(i));
   categoryElt.textContent = timeElt.textContent = sidedishElt.value = notesElt.value = sourceElt.textContent = "";
+  titleElt.style.color = "#000000";
   sidedishElt.disabled = true;
   notesElt.disabled = true;
 
@@ -77,6 +86,8 @@ function setupMeal(day: string, mealType: string, category: string, recipeName: 
     const recipe = recipesByCategory[category][recipeName];
 
     categoryElt.textContent = category;
+    titleElt.style.color = `#${colorsByCategory[category]}`;
+
     timeElt.textContent = `${recipe.time}m`;
     titleElt.textContent = recipeName;
 

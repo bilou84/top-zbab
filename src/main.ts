@@ -11,8 +11,8 @@ let mainWindow: Electron.BrowserWindow;
 
 function onAppReady() {
   mainWindow = new electron.BrowserWindow({
-    width: 1000, height: 600,
-    minWidth: 800, minHeight: 480,
+    width: 1200, height: 800,
+    minWidth: 1200, minHeight: 800,
     useContentSize: true, autoHideMenuBar: true
   });
   mainWindow.loadURL(`file://${__dirname}/renderer/index.html`);
