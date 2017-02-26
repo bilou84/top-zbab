@@ -15,8 +15,28 @@ function onAppReady() {
   });
   mainWindow.loadURL(`file://${__dirname}/renderer/index.html`);
 
-  // Emitted when the window is closed.
+  mainWindow.webContents.on("did-finish-load", OnWindowFinishedLoading);
   mainWindow.on("closed", OnWindowClosed);
+}
+
+function OnWindowFinishedLoading() {
+  // TODO: Load recipes from json
+  const recipes = {
+    "Végétariens": {
+      "Pâtes pesto": {
+        source: "Zbab",
+        time: "10m",
+        ingredients: [ 200, "g", "pates" ]
+      },
+      "Pâtes carbo": {
+        source: "Zbab",
+        time: "15m",
+        ingredients: [ 200, "g", "pates" ]
+      }
+    }
+  };
+
+  mainWindow.webContents.send("data", recipes);
 }
 
 function OnWindowClosed() {

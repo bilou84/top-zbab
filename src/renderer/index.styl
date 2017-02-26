@@ -1,1 +1,57 @@
-// TODO
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-flow: column;
+  font-family: sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+.buttons {
+  padding: 0.5em;
+
+  button { margin-right: 5px; }
+}
+
+.calendar {
+  flex: 1;
+  padding: 0.5em;
+  display: flex;
+}
+
+table {
+  width: 100%;
+  height: 100%;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.meal-row {
+  height: 45%;
+}
+
+th:first-child {
+  width: 5%
+}
+
+th, td {
+  width: 13%;
+  height: 12.5%;
+  padding: 5px;
+
+  .meal-cell {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+  }
+}

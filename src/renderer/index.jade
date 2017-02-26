@@ -6,5 +6,33 @@ html
     link(rel="stylesheet",href="index.css")
 
   body
-    h1 Hey there!
+    h1 Top Zbab
+    .buttons
+      button.new-menu(disabled) Nouveau menu
+
+    .calendar
+      table
+        tr.header
+          th Jour
+          each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+            th= day
+
+        tr.meal-row
+          th Midi
+          each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+            td(data-day=day data-meal="lunch")
+              .meal-cell
+                p.title
+                p.source
+                p.time
+
+        tr.meal-row
+          th Soir
+          each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+            td(data-day=day data-meal="dinner")
+              .meal-cell
+                p.title
+                p.source
+                p.time
+
     script(src="index.js")
