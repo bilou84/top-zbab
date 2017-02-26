@@ -53,23 +53,26 @@ function createNewMenu() {
 function setupMenu(menu: string[]) {
   let index = 0;
   for (const day of days) {
-    for (const meal of ["lunch", "dinner"]) {
-      const titleElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.title`) as HTMLParagraphElement;
-      const timeElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.time`) as HTMLParagraphElement;
-      const sourceElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.source`) as HTMLParagraphElement;
-      const categoryElt = document.querySelector(`td[data-day=${day}][data-meal=${meal}] p.category`) as HTMLParagraphElement;
+    for (const meal of ["Midi", "Soir"]) {
+      const categoryElt = document.querySelector(`tr[data-meal=${meal}].category-time td[data-day=${day}] .category`) as HTMLParagraphElement;
+      const timeElt = document.querySelector(`tr[data-meal=${meal}].category-time td[data-day=${day}] .time`) as HTMLParagraphElement;
+      const titleElt = document.querySelector(`tr[data-meal=${meal}].title td[data-day=${day}]`) as HTMLTableDataCellElement;
+      const sidedishElt = document.querySelector(`tr[data-meal=${meal}].sidedish td[data-day=${day}]`) as HTMLTableDataCellElement;
+      const sourceElt = document.querySelector(`tr[data-meal=${meal}].source td[data-day=${day}]`) as HTMLTableDataCellElement;
 
       const [category, recipeName] = menu[index].split("_");
       if (recipesByCategory[category] == null || recipesByCategory[category][recipeName] == null) {
         titleElt.textContent = `Unknown recipe. Category: ${category}. Name: ${recipeName}`;
-        timeElt.textContent = sourceElt.textContent = categoryElt.textContent = "";
+        categoryElt.textContent = timeElt.textContent = sidedishElt.textContent = sourceElt.textContent = "";
 
       } else {
         const recipe = recipesByCategory[category][recipeName];
-        titleElt.textContent = recipeName;
-        timeElt.textContent = `${recipe.time}m`;
-        sourceElt.textContent = recipe.source;
+
         categoryElt.textContent = category;
+        timeElt.textContent = `${recipe.time}m`;
+        titleElt.textContent = recipeName;
+        sidedishElt.textContent = recipe.sidedishes != null ? random(recipe.sidedishes) : "";
+        sourceElt.textContent = recipe.source;
       }
 
       index++;

@@ -10,6 +10,32 @@ html
     .buttons
       button.new-menu(disabled) Nouveau menu
 
+    mixin meal(meal)
+      tr(data-meal=meal).category-time
+        th(rowspan=5)=meal
+        each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+          td(data-day=day)
+            div
+              p.category
+              p.time
+
+      tr(data-meal=meal).title
+        each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+          td(data-day=day)
+
+      tr(data-meal=meal).sidedish
+        each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+          td(data-day=day)
+
+      tr(data-meal=meal).notes
+        each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+          td(data-day=day)
+            textarea
+
+      tr(data-meal=meal).source
+        each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+          td(data-day=day)
+
     .calendar
       table
         tr.header
@@ -17,24 +43,7 @@ html
           each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
             th= day
 
-        tr.meal-row
-          th Midi
-          each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-            td(data-day=day data-meal="lunch")
-              .meal-cell
-                p.title
-                p.time
-                p.source
-                p.category
-
-        tr.meal-row
-          th Soir
-          each day in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-            td(data-day=day data-meal="dinner")
-              .meal-cell
-                p.title
-                p.time
-                p.source
-                p.category
+        +meal("Midi")
+        +meal("Soir")
 
     script(src="index.js")

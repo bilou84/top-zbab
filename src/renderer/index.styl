@@ -32,12 +32,13 @@ table {
 
 table, th, td {
   border: 1px solid black;
+  border-spacing: 0;
   border-collapse: collapse;
   text-align: center;
 }
 
-.meal-row {
-  height: 45%;
+tr.header {
+  height: 5%;
 }
 
 th:first-child {
@@ -46,11 +47,40 @@ th:first-child {
 
 th, td {
   width: 13%;
-  padding: 1px;
+}
 
-  .meal-cell {
+td {
+  padding: 0px 3px 0px 3px;
+}
+
+tr.category-time {
+  height: 5%;
+  font-size: 12px;
+
+  div {
     display: flex;
-    flex-flow: column;
     justify-content: space-between;
+  }
+
+  td { border-bottom: none; }
+}
+
+tr.title, tr.sidedish, tr.notes {
+  td {
+    border-bottom: none;
+    border-top: none;
+  }
+}
+
+tr.notes textarea {
+  width: 90%;
+}
+
+tr.source {
+  height: 5%;
+  font-size: 10px;
+
+  td {
+    border-top: none;
   }
 }
