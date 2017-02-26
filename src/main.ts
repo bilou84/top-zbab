@@ -61,10 +61,26 @@ function OnWindowFinishedLoading() {
   mainWindow.webContents.send("data", recipesByCategory, menusByDay);
 }
 
-function OnWindowClosed() {
-  mainWindow = null;
+let scheduledMenuSave: NodeJS.Timer;
+let menuToSave: { [day: string]: { Lunch: IMeal; Dinner: IMeal; } };
+
+function saveMenu() {
+  fs.writeFileSync(path.join(__dirname, "data", "menu.json"), JSON.stringify(menuToSave, null, 2), { encoding: "utf8" });
+
+  scheduledMenuSave = null;
+  menuToSave = null;
 }
 
 electron.ipcMain.on("saveMenu", (sender, menu) => {
-  fs.writeFileSync(path.join(__dirname, "data", "menu.json"), JSON.stringify(menu, null, 2), { encoding: "utf8" });
+  menuToSave = menu;
+  if (scheduledMenuSave == null) scheduledMenuSave = setTimeout(saveMenu, 10 * 1000);
 });
+
+function OnWindowClosed() {
+  if (scheduledMenuSave != null) {
+    clearTimeout(scheduledMenuSave);
+    saveMenu();
+  }
+
+  mainWindow = null;
+}
