@@ -22,18 +22,20 @@ function onAppReady() {
 }
 
 function OnWindowFinishedLoading() {
-  const recipesByCategory: { [category: string]: { [recipe: string]: IRecipe } } = {};
+  const dataByCategory: { [category: string]: ICategory } = {};
   let menusByDay: Menu;
 
-  const recipesPath = path.join(__dirname, "data", "recipes");
-  for (const category of fs.readdirSync(recipesPath)) {
-    recipesByCategory[category] = {};
+  const categoriesPath = path.join(__dirname, "data", "categories");
+  for (const categoryName of fs.readdirSync(categoriesPath)) {
+    const { color, quantity } = JSON.parse(fs.readFileSync(path.join(categoriesPath, categoryName, "category.json"), { encoding: "utf8" }));
+    dataByCategory[categoryName] = { color, quantity, recipesByName: {} };
 
-    for (const recipeFileName of fs.readdirSync(path.join(recipesPath, category))) {
-      const recipeFile = fs.readFileSync(path.join(recipesPath, category, recipeFileName), { encoding: "utf8" });
-      let recipe: IRecipe;
+    const recipesPath = path.join(categoriesPath, categoryName, "recipes");
+    for (const recipeFileName of fs.readdirSync(recipesPath)) {
+      const recipeFile = fs.readFileSync(path.join(recipesPath, recipeFileName), { encoding: "utf8" });
+      let recipeJSON: IRecipe;
       try {
-        recipe = JSON.parse(recipeFile);
+        recipeJSON = JSON.parse(recipeFile);
       }
       catch (e) {
         console.log(`Failed to parse recipe ${recipeFileName}`);
@@ -41,7 +43,7 @@ function OnWindowFinishedLoading() {
         continue;
       }
 
-      recipesByCategory[category][recipeFileName.replace(".json", "")] = recipe;
+      dataByCategory[categoryName].recipesByName[recipeFileName.replace(".json", "")] = recipeJSON;
     }
   }
 
@@ -58,7 +60,7 @@ function OnWindowFinishedLoading() {
     menusByDay = null;
   }
 
-  mainWindow.webContents.send("data", recipesByCategory, menusByDay);
+  mainWindow.webContents.send("data", dataByCategory, menusByDay);
 }
 
 let scheduledMenuSave: NodeJS.Timer;
