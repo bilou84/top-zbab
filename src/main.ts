@@ -1,4 +1,6 @@
 import * as electron from "electron";
+import * as fs from "fs";
+import * as path from "path";
 
 const app = electron.app;
 app.on("ready", onAppReady);
@@ -20,23 +22,19 @@ function onAppReady() {
 }
 
 function OnWindowFinishedLoading() {
-  // TODO: Load recipes from json
-  const recipes = {
-    "Végétariens": {
-      "Pâtes pesto": {
-        source: "Zbab",
-        time: "10m",
-        ingredients: [ 200, "g", "pates" ]
-      },
-      "Pâtes carbo": {
-        source: "Zbab",
-        time: "15m",
-        ingredients: [ 200, "g", "pates" ]
-      }
-    }
-  };
+  const recipesByCategory: { [category: string]: { [recipe: string]: IRecipe } } = {};
 
-  mainWindow.webContents.send("data", recipes);
+  const recipesPath = path.join(__dirname, "data", "recipes");
+  for (const category of fs.readdirSync(recipesPath)) {
+    recipesByCategory[category] = {};
+
+    for (const recipeFileName of fs.readdirSync(path.join(recipesPath, category))) {
+      const recipeFile = fs.readFileSync(path.join(recipesPath, category, recipeFileName), { encoding: "utf8" });
+      recipesByCategory[category][recipeFileName.replace(".json", "")] = JSON.parse(recipeFile);
+    }
+  }
+
+  mainWindow.webContents.send("data", recipesByCategory);
 }
 
 function OnWindowClosed() {

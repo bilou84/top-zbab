@@ -1,13 +1,5 @@
 import * as electron from "electron";
 
-interface IRecipe {
-  ingredients: Array<string|number>;
-  time: string;
-  source: string;
-  flags?: string[];
-  sidedishes?: string[];
-}
-
 const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 let recipesByCategory: { [category: string]: { [recipe: string]: IRecipe } };
 

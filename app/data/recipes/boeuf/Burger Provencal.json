@@ -1,0 +1,10 @@
+{
+  "ingredients": [
+    2, "", "pain burger",
+    200, "g", "boeuf hachée",
+    0, "", "herbes de provences"
+  ],
+  "time": 30,
+  "source": "Zbab",
+  "sidedishes": [ "Salade", "Patates" ]
+}

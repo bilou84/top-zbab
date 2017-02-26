@@ -1,0 +1,10 @@
+{
+  "ingredients": [
+    1, "", "pâte à tarte",
+    2, "", "poireau",
+    2, "", "oeuf"
+  ],
+  "time": 20,
+  "flags": [ "tarte" ],
+  "sidedishes": [ "Salade" ]
+}
