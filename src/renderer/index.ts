@@ -16,11 +16,11 @@ electron.ipcRenderer.on("data", (event, recipes) => {
 });
 
 function createNewMenu() {
-  const recipeQuantityByCategory: { [category: string]: number } = {
-    "boeuf": 6,
-    "poisson": 5,
-    "vegetariens": 3
-  };
+  // TODO: Ensure better distribution of categories
+  const recipeQuantityByCategory: { [category: string]: number } = {};
+  for (const category of Object.keys(recipesByCategory)) {
+    recipeQuantityByCategory[category] = category === "poisson" || category === "végétariens" ? 3 : 2;
+  }
 
   const newMenu: string[] = [];
 
@@ -34,7 +34,11 @@ function createNewMenu() {
     newMenu.push(`${categoryLunch}_${recipeNameLunch}`);
 
     // Dinner
-    const categoryDinner = random(Object.keys(recipeQuantityByCategory));
+    let categoryDinner = random(Object.keys(recipeQuantityByCategory));
+    while (categoryDinner === categoryLunch && Object.keys(recipeQuantityByCategory).length > 1) {
+      categoryDinner = random(Object.keys(recipeQuantityByCategory));
+    }
+
     recipeQuantityByCategory[categoryDinner]--;
     if (recipeQuantityByCategory[categoryDinner] === 0) delete recipeQuantityByCategory[categoryDinner];
 
