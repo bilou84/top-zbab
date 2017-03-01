@@ -18,7 +18,7 @@ function onAppReady() {
   mainWindow.loadURL(`file://${__dirname}/renderer/index.html`);
 
   mainWindow.webContents.on("did-finish-load", OnWindowFinishedLoading);
-  mainWindow.on("closed", OnWindowClosed);
+  mainWindow.on("closed", OnMainWindowClosed);
 }
 
 function OnWindowFinishedLoading() {
@@ -76,15 +76,33 @@ function saveMenu() {
   menuToSave = null;
 }
 
-electron.ipcMain.on("saveMenu", (sender, menu) => {
+electron.ipcMain.on("saveMenu", (sender: Electron.IpcMainEvent, menu: Menu) => {
   menuToSave = menu;
   if (scheduledMenuSave == null) scheduledMenuSave = setTimeout(saveMenu, 10 * 1000);
 });
 
-function OnWindowClosed() {
+let shoppingListWindow: Electron.BrowserWindow;
+electron.ipcMain.on("shoppingList", (sender: Electron.IpcMainEvent, dataByCategory: { [category: string]: ICategory }, menusByDay: Menu) => {
+  shoppingListWindow = new electron.BrowserWindow({
+    width: 800, height: 600,
+    minWidth: 800, minHeight: 600,
+    useContentSize: true, autoHideMenuBar: true
+  });
+  shoppingListWindow.loadURL(`file://${__dirname}/renderer/shoppingList/index.html`);
+
+  shoppingListWindow.webContents.on("did-finish-load", () => { shoppingListWindow.webContents.send("data", dataByCategory, menusByDay); });
+  shoppingListWindow.on("closed", () => { shoppingListWindow = null; });
+});
+
+function OnMainWindowClosed() {
   if (scheduledMenuSave != null) {
     clearTimeout(scheduledMenuSave);
     saveMenu();
+  }
+
+  if (shoppingListWindow != null) {
+    shoppingListWindow.close();
+    shoppingListWindow = null;
   }
 
   mainWindow = null;

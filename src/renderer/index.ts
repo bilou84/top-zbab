@@ -1,6 +1,7 @@
 import * as electron from "electron";
 
 const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+const mealTypes = [ "Midi", "Soir" ];
 const frequencyNumberByType: { [type: string]: number } = {
   "Frequent": 30,
   "Normal": 5,
@@ -14,7 +15,7 @@ electron.ipcRenderer.on("data", (event, theDataByCategory, theMenusByDay) => {
   menusByDay = theMenusByDay;
 
   for (const day of days) {
-    for (const mealType of ["Midi", "Soir"]) {
+    for (const mealType of mealTypes) {
       if (menusByDay != null) {
         const meal = menusByDay[day][mealType];
         setupMeal(day, mealType, meal.category, meal.recipe, meal.sidedish, meal.notes);
@@ -37,6 +38,10 @@ electron.ipcRenderer.on("data", (event, theDataByCategory, theMenusByDay) => {
   const newMenuButton = document.querySelector("button.new-menu") as HTMLButtonElement;
   newMenuButton.addEventListener("click", createNewMenu);
   newMenuButton.disabled = false;
+
+  const shoppingListButton = document.querySelector("button.shopping-list") as HTMLButtonElement;
+  shoppingListButton.addEventListener("click", createShoppingList);
+  if (menusByDay != null) shoppingListButton.disabled = false;
 });
 
 function createNewMenu() {
@@ -52,7 +57,7 @@ function createNewMenu() {
   for (let i = 0; i < days.length; i++) {
     menusByDay[days[i]] = {};
 
-    for (const mealType of ["Midi", "Soir"]) {
+    for (const mealType of mealTypes) {
       const category = getCategory(recipeQuantityByCategory, pickedCategories);
       const recipeName = getRecipe(category, pickedRecipes, pickedFlags);
       const sidedish = random(dataByCategory[category].recipesByName[recipeName].sidedishes);
@@ -61,6 +66,11 @@ function createNewMenu() {
   }
 
   electron.ipcRenderer.send("saveMenu", menusByDay);
+  (document.querySelector("button.shopping-list") as HTMLButtonElement).disabled = false;
+}
+
+function createShoppingList() {
+  electron.ipcRenderer.send("shoppingList", dataByCategory, menusByDay);
 }
 
 function setupMeal(day: string, mealType: string, category: string, recipeName: string, sidedish: string, notes: string) {

@@ -5,12 +5,12 @@ const tasks = [];
 
 // Jade
 const jade = require("gulp-jade");
-gulp.task("jade", () => gulp.src("./src/renderer/index.jade").pipe(jade()).pipe(gulp.dest("app/renderer")));
+gulp.task("jade", () => gulp.src("./src/renderer/**/*.jade").pipe(jade()).pipe(gulp.dest("app/renderer")));
 tasks.push("jade");
 
 // Stylus
 const stylus = require("gulp-stylus");
-gulp.task("stylus-index", () => gulp.src("./src/renderer/index.styl").pipe(stylus({ compress: true })).pipe(gulp.dest("app/renderer")));
+gulp.task("stylus-index", () => gulp.src("./src/renderer/**/*.styl").pipe(stylus({ compress: true })).pipe(gulp.dest("app/renderer")));
 tasks.push("stylus-index");
 
 // TypeScript
