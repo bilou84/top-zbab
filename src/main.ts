@@ -27,6 +27,8 @@ function OnWindowFinishedLoading() {
 
   const categoriesPath = path.join(__dirname, "data", "categories");
   for (const categoryName of fs.readdirSync(categoriesPath)) {
+    if (!fs.statSync(path.join(categoriesPath, categoryName)).isDirectory()) continue;
+
     const { color, quantity } = JSON.parse(fs.readFileSync(path.join(categoriesPath, categoryName, "category.json"), { encoding: "utf8" }));
     dataByCategory[categoryName] = { color, quantity, recipesByName: {} };
 
