@@ -45,6 +45,7 @@ function OnWindowFinishedLoading() {
         continue;
       }
 
+      if (recipeJSON.frequency == null) recipeJSON.frequency = "Normal";
       dataByCategory[categoryName].recipesByName[recipeFileName.replace(".json", "")] = recipeJSON;
     }
   }

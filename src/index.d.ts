@@ -10,6 +10,7 @@ interface IRecipe {
   source?: string;
   flags?: string[];
   sidedishes?: string[];
+  frequency: "Frequent"|"Rare"|"Normal";
 }
 
 type Menu = { [day: string]: { [mealType: string]: IMeal } };

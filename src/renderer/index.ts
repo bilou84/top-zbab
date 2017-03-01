@@ -1,6 +1,11 @@
 import * as electron from "electron";
 
 const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+const frequencyNumberByType: { [type: string]: number } = {
+  "Frequent": 30,
+  "Normal": 5,
+  "Rare": 1
+};
 let dataByCategory: { [category: string]: ICategory };
 let menusByDay: Menu;
 
@@ -155,18 +160,33 @@ function getCategory(recipeQuantityByCategory: { [category: string]: number }, p
 
 function getRecipe(category: string, pickedRecipes: string[], pickedFlags: string[]) {
   let maxIterator = 100;
-  let recipeName: string;
+  let pickedRecipeName: string;
+
+  const recipesByName = dataByCategory[category].recipesByName;
+  let totalFrequency = 0;
+  for (const recipeName in recipesByName) totalFrequency += frequencyNumberByType[recipesByName[recipeName].frequency];
 
   while (maxIterator > 0) {
     maxIterator--;
 
-    recipeName = random(Object.keys(dataByCategory[category].recipesByName));
-    if (pickedRecipes.indexOf(`${category}_${recipeName}`) !== -1) continue;
+    const odd = Math.random() * totalFrequency;
+    let checkFrequency = 0;
+    for (const checkRecipeName in recipesByName) {
+      const checkRecipe = recipesByName[checkRecipeName];
+      checkFrequency += frequencyNumberByType[checkRecipe.frequency];
+      if (odd <= checkFrequency) {
+        pickedRecipeName = checkRecipeName;
+        break;
+      }
+    }
 
-    const recipe = dataByCategory[category].recipesByName[recipeName];
-    if (recipe.flags != null) {
+    pickedRecipeName = random(Object.keys(recipesByName));
+    if (pickedRecipes.indexOf(`${category}_${pickedRecipeName}`) !== -1) continue;
+
+    const pickedRecipe = recipesByName[pickedRecipeName];
+    if (pickedRecipe.flags != null) {
       let isFlagAlreadyPicked = false;
-      for (const flag of recipe.flags) {
+      for (const flag of pickedRecipe.flags) {
         if (pickedFlags.indexOf(flag) !== -1) {
           isFlagAlreadyPicked = true;
           break;
@@ -179,13 +199,13 @@ function getRecipe(category: string, pickedRecipes: string[], pickedFlags: strin
     break;
   }
 
-  const recipe = dataByCategory[category].recipesByName[recipeName];
-  if (recipe.flags != null) {
-    for (const flag of recipe.flags) pickedFlags.push(flag);
+  const flags = recipesByName[pickedRecipeName].flags;
+  if (flags != null) {
+    for (const flag of flags) pickedFlags.push(flag);
   }
 
-  pickedRecipes.push(`${category}_${recipeName}`);
-  return recipeName;
+  pickedRecipes.push(`${category}_${pickedRecipeName}`);
+  return pickedRecipeName;
 }
 
 function random(list: string[]) {
