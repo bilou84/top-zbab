@@ -42,13 +42,14 @@ function createNewMenu() {
   menusByDay = {};
   const pickedCategories: string[] = [];
   const pickedRecipes: string[] = [];
+  const pickedFlags: string[] = [];
 
   for (let i = 0; i < days.length; i++) {
     menusByDay[days[i]] = {};
 
     for (const mealType of ["Midi", "Soir"]) {
       const category = getCategory(recipeQuantityByCategory, pickedCategories);
-      const recipeName = getRecipe(category, pickedRecipes);
+      const recipeName = getRecipe(category, pickedRecipes, pickedFlags);
       const sidedish = random(dataByCategory[category].recipesByName[recipeName].sidedishes);
       setupMeal(days[i], mealType, category, recipeName, sidedish, "");
     }
@@ -134,15 +135,15 @@ function getCategory(recipeQuantityByCategory: { [category: string]: number }, p
     maxIterator--;
 
     category = random(highestCategories);
-    let categoryAlreadyPicked = false;
+    let isCategoryAlreadyPicked = false;
     for (let i = 1; i <= Math.min(pickedCategories.length, minCategoryRepetition); i++) {
       if (pickedCategories[pickedCategories.length - i] === category) {
-        categoryAlreadyPicked = true;
+        isCategoryAlreadyPicked = true;
         break;
       }
     }
 
-    if (!categoryAlreadyPicked) break;
+    if (!isCategoryAlreadyPicked) break;
   }
 
   recipeQuantityByCategory[category]--;
@@ -152,18 +153,39 @@ function getCategory(recipeQuantityByCategory: { [category: string]: number }, p
   return category;
 }
 
-function getRecipe(category: string, pickedRecipes: string[]) {
+function getRecipe(category: string, pickedRecipes: string[], pickedFlags: string[]) {
   let maxIterator = 100;
-  let recipe: string;
+  let recipeName: string;
 
-  while (maxIterator > 0 && (recipe == null || pickedRecipes.indexOf(`${category}_${recipe}`) !== -1)) {
+  while (maxIterator > 0) {
     maxIterator--;
 
-    recipe = random(Object.keys(dataByCategory[category].recipesByName));
+    recipeName = random(Object.keys(dataByCategory[category].recipesByName));
+    if (pickedRecipes.indexOf(`${category}_${recipeName}`) !== -1) continue;
+
+    const recipe = dataByCategory[category].recipesByName[recipeName];
+    if (recipe.flags != null) {
+      let isFlagAlreadyPicked = false;
+      for (const flag of recipe.flags) {
+        if (pickedFlags.indexOf(flag) !== -1) {
+          isFlagAlreadyPicked = true;
+          break;
+        }
+      }
+
+      if (isFlagAlreadyPicked) continue;
+    }
+
+    break;
   }
 
-  pickedRecipes.push(`${category}_${recipe}`);
-  return recipe;
+  const recipe = dataByCategory[category].recipesByName[recipeName];
+  if (recipe.flags != null) {
+    for (const flag of recipe.flags) pickedFlags.push(flag);
+  }
+
+  pickedRecipes.push(`${category}_${recipeName}`);
+  return recipeName;
 }
 
 function random(list: string[]) {
