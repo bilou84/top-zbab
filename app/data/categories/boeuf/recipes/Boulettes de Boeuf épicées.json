@@ -1,0 +1,20 @@
+{
+  "time": "45m",
+  "ingredients": [
+    150, "g", "Boeuf haché",
+    1, "", "Oeuf",
+    25,"g","Chapelure",
+    2,"","Gousse d'ail",
+    1,"","Coriandre",
+    1,"","Concentré de tomate",
+    1,"","Piment de Cayenne",
+    100,"g","Pulpe de tomate",
+    1,"","Boite (M) de haricots rouges",
+    1,"","Poirvon",
+    1, "","Oignon",
+    1,"","Cumin"
+  ],
+  "source": "Cuisine Minceur p148",
+  "sidedishes": [ "Légumes" ],
+  "flags": [ "Mexicain" ]
+}

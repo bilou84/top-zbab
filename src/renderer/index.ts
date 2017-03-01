@@ -80,7 +80,7 @@ function setupMeal(day: string, mealType: string, category: string, recipeName: 
     categoryElt.textContent = category;
     titleElt.style.color = dataByCategory[category].color;
 
-    timeElt.textContent = `${recipe.time}m`;
+    timeElt.textContent = recipe.time;
     titleElt.textContent = recipeName;
 
     if (recipe.sidedishes != null) {

@@ -1,8 +1,10 @@
 {
+  "time": "30m",
   "ingredients": [
-    150, "g", "riz",
-    2, "", "tranche saumon",
-    0, "", "sauce soja"
+    150, "g", "Riz",
+    2, "", "Tranche saumon",
+    1, "", "Sauce soja"
   ],
-  "time": 30
+  "sidedishes": [ "Riz" ],
+  "flags": [ "Japonais"]
 }

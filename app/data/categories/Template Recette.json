@@ -1,0 +1,12 @@
+{
+  "time": 30,
+  "ingredients": [
+    150, "unité: rien|g|cl", "aliment au singulier, toujours écrit pareil pour additionné",
+    20, "cl", "Lait"
+  ],
+  "source": "Livre + page",
+  "sidedishes": [ "Salade", "Patates" ],
+  "season": [ "Automne", "Hiver" ],
+  "flags": [ "Japonais", "Gros", "Tarte" ],
+  "frequency": "Rare|Frequent"
+}

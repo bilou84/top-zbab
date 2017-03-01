@@ -1,8 +1,10 @@
 {
+  "time": "10m",
   "ingredients": [
-    80, "g", "pâtes",
+    160, "g", "pâtes",
     1, "", "sauce pesto",
     1, "", "gruyère"
   ],
-  "time": 10
+  "sidedishes": [ "Pâtes" ],
+  "flags": [ "Pâtes" ]
 }

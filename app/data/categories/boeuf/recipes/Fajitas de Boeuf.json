@@ -1,0 +1,16 @@
+{
+  "time": "20m",
+  "ingredients": [
+    2, "", "Steak haché",
+    1,"","Oignon",
+    1,"","Boite (P) de maïs",
+    1,"","Boite (M) de haricots rouges",
+    1,"","Sauce mexicaine",
+    4,"","Tortilla",
+    1,"","Poivron"
+  ],
+
+  "sidedishes": [ "Légumes" ],
+  "flags": [ "Gros","Mexicain" ]
+
+}

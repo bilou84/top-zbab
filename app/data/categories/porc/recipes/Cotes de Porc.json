@@ -1,7 +1,8 @@
 {
+  "time": "30m",
   "ingredients": [
-    2, "", "cote de porc"
+    2, "", "Cote de porc"
   ],
-  "time": 30,
-  "sidedishes": [ "Légumes" ]
+  "sidedishes": [ "Légumes","Patates","Purée" ],
+  "frequency": "Frequent"
 }

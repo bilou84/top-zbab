@@ -1,10 +1,12 @@
 {
+  "time": "20m",
   "ingredients": [
-    1, "", "pâte à tarte",
-    2, "", "poireau",
-    2, "", "oeuf"
+    1, "", "Pâte à tarte",
+    1, "","Oignon",
+    1, "", "Poireau",
+    2, "", "Oeuf",
+    20,"cl","Crème fraiche"
   ],
-  "time": 20,
-  "flags": [ "tarte" ],
+  "flags": [ "Tarte" ],
   "sidedishes": [ "Salade" ]
 }

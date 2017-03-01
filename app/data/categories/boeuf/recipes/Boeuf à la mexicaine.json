@@ -1,0 +1,22 @@
+{
+  "time": "1h30",
+  "ingredients": [
+    250,"g","Boeuf à braiser (paleron)",
+    1,"","Carotte",
+    1,"","Poivron",
+    75,"g","Riz",
+    1,"","Boite (P) de maïs",
+    10,"cl","Coulis de tomate",
+    1,"","Oignon",
+    1,"","Gousse d'ail",
+    1,"","Cube de bouillon de Boeuf",
+    1,"","Persil",
+    1,"","Paprika",
+    1,"","Tabasco"
+
+  ],
+  "source": "Cuisine Minceur p150",
+  "sidedishes": [ "Légumes" ],
+  "flags": [ "Mexicain" ],
+  "frequency": "Rare"
+}

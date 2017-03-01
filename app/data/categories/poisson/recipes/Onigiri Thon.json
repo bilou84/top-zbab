@@ -1,9 +1,9 @@
 {
+  "time": "20m",
   "ingredients": [
-    150, "g", "riz",
-    1, "", "conserve thon",
-    0, "", "sauce soja"
+    150, "g", "Riz",
+    1, "", "Boite thon",
+    1, "", "Sauce soja"
   ],
-  "time": 20,
   "source": "Livre Sushis"
 }
