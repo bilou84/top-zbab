@@ -1,0 +1,21 @@
+{
+  "Légumes": [
+    "Légume", "Poireau", "Oignon", "Aubergine", "Patate", "Poivron", "Echalote", "Ail"
+  ],
+  "Viandes": [
+    "Viande", "Boeuf", "Porc", "Poulet", "Steak",
+    "Pâte à tarte"
+  ],
+  "Poissons": [
+    "Poisson", "Saumon"
+  ],
+  "Laitage": [
+    "Lait", "Yaourt", "Fromage", "Gruyère", "Crème fraiche", "Oeuf"
+  ],
+  "Conserves": [
+    "Conserve", "Boite", "Sauce", "Pâte", "Riz", "Tomate séchée"
+  ],
+  "Epices": [
+    "Epice", "Sel", "Poivre", "Herbe", "Canelle", "Basilic"
+  ]
+}
