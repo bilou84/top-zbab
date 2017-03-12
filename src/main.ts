@@ -13,7 +13,8 @@ function onAppReady() {
   mainWindow = new electron.BrowserWindow({
     width: 1200, height: 800,
     minWidth: 1200, minHeight: 800,
-    useContentSize: true, autoHideMenuBar: true
+    useContentSize: true, autoHideMenuBar: true,
+    icon: `${__dirname}/logo.ico`
   });
   mainWindow.loadURL(`file://${__dirname}/renderer/index.html`);
 
@@ -26,7 +27,8 @@ electron.ipcMain.on("shoppingList", (sender: Electron.IpcMainEvent) => {
   shoppingListWindow = new electron.BrowserWindow({
     width: 800, height: 600,
     minWidth: 800, minHeight: 600,
-    useContentSize: true, autoHideMenuBar: true
+    useContentSize: true, autoHideMenuBar: true,
+    icon: `${__dirname}/logo.ico`
   });
   shoppingListWindow.loadURL(`file://${__dirname}/renderer/shoppingList/index.html`);
 
