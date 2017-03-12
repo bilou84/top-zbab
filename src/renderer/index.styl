@@ -7,22 +7,41 @@ body {
   display: flex;
   flex-flow: column;
   font-family: sans-serif;
+  background-color: #fcf9e8;
+  color: #443d44;
 }
 
-h1 {
-  text-align: center;
+img.logo {
+  width: 256px;
+  margin: auto;
+  margin-top: 1em;
 }
 
 .buttons {
+  margin: auto;
+  margin-top: 1em;
   padding: 0.5em;
 
-  button { margin-right: 5px; }
+  button {
+    margin-right: 5px;
+    border: none;
+    border-radius: 10px;
+    padding: 0.5em;
+    color: #bbbbbb;
+
+    background-color: #bf3640;
+    &:hover { background-color: #ad2c35; }
+    &:active { background-color: #93202f; }
+
+    &:focus { outline: none; }
+  }
 }
 
 .calendar {
   flex: 1;
   padding: 0.5em;
-  margin: 8%;
+  margin: 4%;
+  margin-top: 1em;
   display: flex;
 }
 
@@ -32,10 +51,14 @@ table {
 }
 
 table, th, td {
-  border: 1px solid black;
+  border: 2px solid #68778a;
   border-spacing: 0;
   border-collapse: collapse;
   text-align: center;
+}
+
+th {
+  color: #93202f;
 }
 
 tr.header {
